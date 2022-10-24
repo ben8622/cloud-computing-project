@@ -1,0 +1,41 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: react-docker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: react-docker
+  template:
+    metadata:
+      labels:
+        app: react-docker
+    spec:
+      containers:
+      - name: react-docker
+        image: ben8622/react-docker
+        ports:
+        - containerPort: 80
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: react-docker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: react-docker
+  template:
+    metadata:
+      labels:
+        app: react-docker
+    spec:
+      containers:
+        - name: react-docker
+          image: ben8622/react-docker
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
