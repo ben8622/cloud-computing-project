@@ -18,7 +18,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dev-to-the-moon    # Add your cluster name here.
   GKE_ZONE: us-central1   # Add your cluster zone here.
-  DEPLOYMENT_NAME: gke-test # Add your deployment name here.
+  DEPLOYMENT_NAME: react-docker # Add your deployment name here.
   IMAGE: static-site
 
 jobs:
