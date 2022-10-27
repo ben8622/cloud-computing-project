@@ -1,13 +1,28 @@
-kind: Service
-apiVersion: v1
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: react-docker
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 80
+#       targetPort: 80
+#       protocol: TCP
+#       nodePort: 31000
+#   selector:
+#     app: hello
+
+apiVersion: "v1"
+kind: "Service"
 metadata:
-  name: react-docker
+  name: "react-docker-service"
+  namespace: "default"
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-      nodePort: 31000
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
   selector:
-    app: hello
+    app: "react-docker"
+  type: "LoadBalancer"
+  loadBalancerIP: ""
