@@ -1,17 +1,3 @@
-# kind: Service
-# apiVersion: v1
-# metadata:
-#   name: react-docker
-# spec:
-#   type: NodePort
-#   ports:
-#     - port: 80
-#       targetPort: 80
-#       protocol: TCP
-#       nodePort: 31000
-#   selector:
-#     app: hello
-
 apiVersion: "v1"
 kind: "Service"
 metadata:
