@@ -8,7 +8,7 @@ export default function SignUp (props) {
     const handleClick = async () => {
         try{
             setLoading(true);
-            fetch("/submit-email")
+            fetch(process.env.REACT_APP_API + "signup")
                 .then((res) => console.log(res))
                 .finally(() => setLoading(false))
         } catch (e) {
