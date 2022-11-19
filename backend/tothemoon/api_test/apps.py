@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TothemoonConfig(AppConfig):
+class ApiTestConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tothemoon'
+    name = 'api_test'

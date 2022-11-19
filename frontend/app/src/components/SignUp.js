@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 import { TextField, Box, Stack, Container, Button, CircularProgress } from '@mui/material';
 
@@ -8,9 +9,20 @@ export default function SignUp (props) {
     const handleClick = async () => {
         try{
             setLoading(true);
-            fetch(process.env.REACT_APP_API + "signup")
-                .then((res) => console.log(res))
-                .finally(() => setLoading(false))
+
+            axios.get(process.env.REACT_APP_API + "subscribe")
+            .then((res) => {
+                console.log(res)
+            })
+            .finally(() => setLoading(false))
+
+            // fetch(process.env.REACT_APP_API + "signup", {
+            //     headers: new Headers({
+            //         'Referrer-Policy': 'origin'
+            //     })
+            // })
+            // .then((res) => console.log(res))
+            // .finally(() => setLoading(false))
         } catch (e) {
             setLoading(false);
             console.error(e);
