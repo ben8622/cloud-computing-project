@@ -5,24 +5,41 @@ import { TextField, Box, Stack, Container, Button, CircularProgress } from '@mui
 
 export default function SignUp (props) {
     const [loading, setLoading] = useState(false)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState("")
+
+
+    const handleFirstNameChange = (event) => {
+        setFirstName(event.target.value)
+    }
+    const handleLastNameChange = (event) => {
+        setLastName(event.target.value)
+    }
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value)
+    }
+
+    // this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
+    // this.handleLastNameChange = this.handleLastNameChange.bind(this);
+    // this.handleEmailChange = this.handleEmailChange.bind(this);
 
     const handleClick = async () => {
         try{
             setLoading(true);
 
-            axios.get(process.env.REACT_APP_API + "subscribe")
+            const data = {
+                "firstName": firstName, 
+                "lastName": lastName, 
+                "email": email, 
+            }
+
+            axios.post(process.env.REACT_APP_API + "api/subscribe/", data)
             .then((res) => {
                 console.log(res)
             })
             .finally(() => setLoading(false))
 
-            // fetch(process.env.REACT_APP_API + "signup", {
-            //     headers: new Headers({
-            //         'Referrer-Policy': 'origin'
-            //     })
-            // })
-            // .then((res) => console.log(res))
-            // .finally(() => setLoading(false))
         } catch (e) {
             setLoading(false);
             console.error(e);
@@ -48,11 +65,11 @@ export default function SignUp (props) {
                     !loading ? 
                     <Stack spacing={2}>
                         <Container>
-                            <TextField className="input" id="first-name" label="First Name" variant="outlined"/>
-                            <TextField className="input" id="last-name" label="Last Name" variant="outlined"/>
+                            <TextField className="input" id="first-name" label="First Name" value={firstName} onChange={handleFirstNameChange} variant="outlined"/>
+                            <TextField className="input" id="last-name" label="Last Name" value={lastName} onChange={handleLastNameChange} variant="outlined"/>
                         </Container>
                         <Container>
-                            <TextField className="input" id="email" label="Email" variant="outlined" required/>
+                            <TextField className="input" id="email" label="Email" value={email} onChange={handleEmailChange} variant="outlined" required/>
                         </Container>
                         <Container sx={{textAlign: 'center'}}>
                             <Button 
