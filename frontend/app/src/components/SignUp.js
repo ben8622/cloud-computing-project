@@ -20,10 +20,6 @@ export default function SignUp (props) {
         setEmail(event.target.value)
     }
 
-    // this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
-    // this.handleLastNameChange = this.handleLastNameChange.bind(this);
-    // this.handleEmailChange = this.handleEmailChange.bind(this);
-
     const handleClick = async () => {
         try{
             setLoading(true);
