@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from .serializers import SubscribeFormSerializer, StockSerializer
 from .models import SubscribeForm, Stock
 from rest_framework import status
+from .services import SendEmailsService
 
 
 @api_view(['POST'])
@@ -36,3 +37,19 @@ def update_stocks(request):
         return Response(data=f"Stocks updated.", status=status.HTTP_200_OK)
     except Exception as e:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def send_email(request):
+    stocks = Stock.objects.order_by('-createdDate')[:3]
+    stocks = StockSerializer(stocks, context={'request': request}, many=True).data
+
+    subscribers = SubscribeForm.objects.all()
+
+    for subscriber in subscribers:
+        SendEmailsService.execute({
+            'email': subscriber.email,
+            'stocks': stocks
+        })
+
+    return Response(status=status.HTTP_200_OK)

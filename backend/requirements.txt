@@ -2,3 +2,4 @@ Django==4.1.3
 python-dotenv==0.21.0
 django-cors-headers
 djangorestframework
+django-service-objects
