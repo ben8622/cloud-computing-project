@@ -41,8 +41,15 @@ def update_stocks(request):
 
 @api_view(['GET'])
 def send_email(request):
-    SendEmailsService.execute({
-        'email': 'benjaminjknight0987@gmail.com',
-        'content': 'temp'
-    })
+    stocks = Stock.objects.order_by('-createdDate')[:3]
+    stocks = StockSerializer(stocks, context={'request': request}, many=True).data
+
+    subscribers = SubscribeForm.objects.all()
+
+    for subscriber in subscribers:
+        SendEmailsService.execute({
+            'email': subscriber.email,
+            'stocks': stocks
+        })
+
     return Response(status=status.HTTP_200_OK)
