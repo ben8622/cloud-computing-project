@@ -27,26 +27,29 @@ export default function TodaysStocks() {
                 display: "flex",
                 alignItems: "center", 
                 justifyContent: "center",
+                textAlign: "center",
                 minWidth: "75%"
             }}
         >
             {loading && <CircularProgress/>}
             {error && <Alert severity='error'>Error loading stocks! Come back in a couple minutes</Alert>}
-            <List sx={{display:"flex", flexDirection:"column", justifyContent:"center", minWidth: '90%'}}>
-                {   data && 
-                    data.map(({symbol, name, value}) => (
-                        <ListItem key={symbol} sx={{display: "flex", flexDirection: "column"}}>
-                            <Stock sx={{maxWidth: "80%"}} symbol={symbol} name={name} value={strToFloat(value)}/>
+            { !loading && !error &&
+                <List sx={{display:"flex", flexDirection:"column", justifyContent:"center", minWidth: '90%'}}>
+                    {   data && 
+                        data.map(({symbol, name, value}) => (
+                            <ListItem key={symbol} sx={{display: "flex", flexDirection: "column"}}>
+                                <Stock sx={{maxWidth: "80%"}} symbol={symbol} name={name} value={strToFloat(value)}/>
+                            </ListItem>
+                        ))
+                    }
+                    {
+                        data &&
+                        <ListItem sx={{display:"flex", justifyContent:"center"}}>
+                            <Typography variant="overline">Last Updated: {new Date(data[0].createdDate).toLocaleDateString()}</Typography>
                         </ListItem>
-                    ))
-                }
-                {
-                    data &&
-                    <ListItem sx={{display:"flex", justifyContent:"center"}}>
-                        <Typography variant="overline">Last Updated: {new Date(data[0].createdDate).toLocaleDateString()}</Typography>
-                    </ListItem>
-                }
-            </List>
+                    }
+                </List>
+            }
         </Box>
     )
 };
