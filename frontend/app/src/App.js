@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './App.css';
-import Breadcrumbs from '@mui/material/Breadcrumbs'
+import {Box, Breadcrumbs} from '@mui/material'
 import Link from '@mui/material/Link'
 import SignUp from './components/SignUp';
 import TodaysStocks from './components/TodaysStocks';
@@ -34,7 +34,14 @@ class App extends React.Component {
     }
 
     return (
-      <div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '2em'
+        }}
+      >
         <Breadcrumbs aria-label="breadcrumb">
           <Link underline="hover" color="inherit" onClick={() => this.handleClick("SignUp")}>
             Signup
@@ -44,7 +51,7 @@ class App extends React.Component {
           </Link>
         </Breadcrumbs >
         {view}
-      </div>
+      </Box>
     );
   };
 }

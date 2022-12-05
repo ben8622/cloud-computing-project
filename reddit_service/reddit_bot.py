@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import re, requests
 
 #   Returns a dictionary for the HTTP header.
@@ -10,6 +11,18 @@ def requestAccessToken():
     developer_file.close()
 
     #   Set the information read from the external file to local variables so that the HTTP headers and HTTP data dictionaries can be made.
+=======
+import requests
+
+def main():
+    
+    #   Read an external file to get the information concerning the Reddit account and the Reddit application made for the project.
+    developer_file = open("developer_info.txt")
+    developer_file_info = developer_file.read().split('\n')
+    developer_file.close()
+
+    #   Set the read information to local variables that will be used for HTTP headers and HTTP data.
+>>>>>>> main
     app_ID = developer_file_info[0]
     app_secret = developer_file_info[1]
     username = developer_file_info[2]
@@ -20,6 +33,7 @@ def requestAccessToken():
     http_headers = {'User-Agent' : 'Python:To The Moon:v1.0.0 (by /u/' + username + ')'}
     http_data = {'grant_type' : 'password', 'username' : username, 'password' : password}  
 
+<<<<<<< HEAD
     #   Send a POST request with the necessary HTTP components to the Reddit API to get an access token. 
     access_token_response = requests.post('https://www.reddit.com/api/v1/access_token', auth=http_authorization, headers=http_headers, data=http_data)
 
@@ -96,5 +110,17 @@ def main():
     
     print(scraped_stock_symbols)
     print(scraped_stocks_closing_prices)
+=======
+    #   Make a POST request to the Reddit API in order to request an access token.
+    access_token_response = requests.post('https://www.reddit.com/api/v1/access_token', auth=http_authorization, headers=http_headers, data=http_data)
+
+    #   Add the 'Authorization' header onto the previous HTTP header tag so that Reddit API methods can now be called.
+    http_headers.update({'Authorization': 'bearer ' + access_token_response.json()['access_token']})
+
+    #   Make API request to return information about the Reddit account that is being used for the bot. 
+    profile_info_response = requests.get('https://oauth.reddit.com/api/v1/me', headers=http_headers)
+    print('Information about the Reddit account that is used for this project.')
+    print(profile_info_response.json())
+>>>>>>> main
 
 main()
