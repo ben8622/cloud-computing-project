@@ -1,4 +1,4 @@
-import time, re, requests, google.cloud.storage
+import time, re, requests
 
 #   Calls the Reddit API to get an OAUTH2 access token.
 #   Returns a dictionary for the HTTP header.
@@ -30,10 +30,10 @@ def requestAccessToken():
 
     return http_headers
 
+#   Runs immediately after the Cloud Function is called by the Pub/Sub and Cloud Scheduler.
 #   Scrapes the most popular Reddit posts from r/wallstreetbets for stock symbols.
-#   Calls the Alpha Vantage API to get the stock company name and the most recent closing price for each scraped stock symbol. 
-#   Returns three separate lists for the scraped stock symbols, stock company names, and stock closing prices.   
-def scrapeRedditAndGetStockData():
+#   Calls the Alpha Vantage API to get the stock company name and the most recent closing price for each scraped stock symbol.  
+def main(event, context):
 
     scraped_stock_symbols = []   
     scraped_stocks_closing_prices = []
@@ -67,6 +67,10 @@ def scrapeRedditAndGetStockData():
 
             #   Iterates through each stock symbol found in the post.
             for stock_symbol in stock_symbols_found:
+
+                #   Removes the stock symbol from the list if the stock symbol has more than four letter after the '$' symbol.
+                if len(stock_symbols_found) > 5:
+                    stock_symbols_found.remove(stock_symbol)
 
                 #   Removes a stock symbol from the list if it appears more than once in the list.
                 if stock_symbols_found.count(stock_symbol) != 1:
@@ -113,7 +117,7 @@ def scrapeRedditAndGetStockData():
 
             #   Rounds the closing price to two decimals and adds the closing price to the list of scraped stocks' prices.
             stock_closing_price_two_decimals = '{:.2f}'.format(float(stock_closing_price))
-            scraped_stocks_closing_prices.append(stock_closing_price_two_decimals)
+            scraped_stocks_closing_prices.append(float(stock_closing_price_two_decimals))
 
         #   Deletes the scraped stock symbol from the scraped stocks list if Alpha Vantage does not recognized the stock symbol.
         else:
@@ -129,26 +133,19 @@ def scrapeRedditAndGetStockData():
         if list_index != len(scraped_stock_symbols):
             time.sleep(60)
 
-    return scraped_stock_symbols, scraped_stocks_company_names, scraped_stocks_closing_prices
+    backend = 'http://34.27.166.78:8080'
 
-#   When the Pub/Sub is triggered by the Google Cloud Scheduler, this function will run automatically.
-#   This function will then move the scraped stock data to a Google Cloud Storage bucket.
-def main(event, context):
-    
-    scraped_stock_symbols, scraped_stocks_company_names, scraped_stocks_closing_prices = scrapeRedditAndGetStockData()
-
-    #   Creates a temporary file in the Google Cloud Function's memory.
-    scraped_stocks_output_file = open('/tmp/scraped_stocks.txt', 'w')
+    json_data = []
 
     list_index = 0
 
-    #   Iterates through each scraped stock and writes its data to a line within the temporary file.
+    #   Adds each scraped stock to the JSON list. 
     while list_index < len(scraped_stock_symbols):
-        scraped_stocks_output_file.write(scraped_stock_symbols[list_index] + ' ' + scraped_stocks_company_names[list_index] + ' ' +  scraped_stocks_closing_prices[list_index] + '\n')
+        json_data.append({ 'name': scraped_stocks_company_names[list_index], 'symbol': scraped_stock_symbols[list_index], 'value': scraped_stocks_closing_prices[list_index]})
         list_index += 1
 
-    scraped_stocks_output_file.close()
+    #   Outputs the JSON data onto the command line terminal.
+    print(json_data)
 
-    #   Creates a bucket object and a blob object so that the contents of the temporary file can be moved to an existing bucket in the Google Cloud Storage.
-    storage_bucket = google.cloud.storage.Client().bucket('to-the-moon-stocks')
-    storage_bucket.blob('scraped_stocks').upload_from_filename('/tmp/scraped_stocks.txt')
+    #   Sends a POST request containing the JSON list of the scraped stocks to the backend.
+    requests.post(backend + '/api/update-stocks/ HTTP/1.1', json=json_data) 
