@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import time, re, requests, google.cloud.storage
 
 #   Calls the Reddit API to get an OAUTH2 access token.
+=======
+import re, requests
+
+>>>>>>> 7f02fc817da4bfe6ba8554e4f7bac66b901f54ec
 #   Returns a dictionary for the HTTP header.
 #   The dictionary contains the 'User-Agent' and 'Authorization' headers.
 def requestAccessToken():
@@ -31,6 +36,7 @@ def requestAccessToken():
     return http_headers
 
 #   Scrapes the most popular Reddit posts from r/wallstreetbets for stock symbols.
+<<<<<<< HEAD
 #   Calls the Alpha Vantage API to get the stock company name and the most recent closing price for each scraped stock symbol. 
 #   Returns three separate lists for the scraped stock symbols, stock company names, and stock closing prices.   
 def scrapeRedditAndGetStockData():
@@ -42,12 +48,27 @@ def scrapeRedditAndGetStockData():
     token_http_headers = requestAccessToken()
     
     #   Specifies to the Reddit API to collect up to the top 100 (most upvoted) posts in descending order within the last day.
+=======
+#   Calls the Alpha Vantage API to get the last closing price for each scraped stock symbol.   
+def main():
+
+    scraped_stock_symbols = []   
+    scraped_stocks_closing_prices = []
+
+    #   Calls the Reddit API to get an OAUTH2 access token.
+    token_http_headers = requestAccessToken()
+    
+    #   Specifies to the Reddit API to collect the top 100 (most upvoted) posts within the last day.
+>>>>>>> 7f02fc817da4bfe6ba8554e4f7bac66b901f54ec
     top_post_parameters = {'limit': 100, 'time': 'day'}
 
     #   Sends a GET request to retrieve the top posts from r/wallstreetbets.
     top_wsb_posts_response  = requests.get('https://oauth.reddit.com//r/wallstreetbets/top', params=top_post_parameters, headers=token_http_headers)
+<<<<<<< HEAD
     
     #   Breaks down the JSON data from the Reddit API response so that the list of top posts can be retrieved and iterated through.
+=======
+>>>>>>> 7f02fc817da4bfe6ba8554e4f7bac66b901f54ec
     top_wsb_posts = top_wsb_posts_response.json()['data']['children']
 
     #   Determines if a string is a stock symbol based on a regular expression.
@@ -72,15 +93,22 @@ def scrapeRedditAndGetStockData():
                 if stock_symbols_found.count(stock_symbol) != 1:
                     stock_symbols_found.remove(stock_symbol)
 
+<<<<<<< HEAD
                 #   Adds the stock symbol without the '$' character to the list of the three most mentioned stock symbols.
                 if stock_symbol[1:] not in scraped_stock_symbols and len(scraped_stock_symbols) != 3:
                     scraped_stock_symbols.append(stock_symbol[1:])
+=======
+                #   Adds the stock symbol to the list of the three most mentioned stock symbols.
+                if stock_symbol not in scraped_stock_symbols and len(scraped_stock_symbols) != 3:
+                    scraped_stock_symbols.append(stock_symbol)
+>>>>>>> 7f02fc817da4bfe6ba8554e4f7bac66b901f54ec
 
     #   Opens and reads an external file that contains API key information for Alpha Vantage API access.
     stock_API_key_file = open('alpha_vantage_API_key.txt')
     stock_API_key = stock_API_key_file.read()
     stock_API_key_file.close()
 
+<<<<<<< HEAD
     list_index = 1
 
     #   Iterates through the top 3 scraped stock symbols.
@@ -152,3 +180,26 @@ def main(event, context):
     #   Creates a bucket object and a blob object so that the contents of the temporary file can be moved to an existing bucket in the Google Cloud Storage.
     storage_bucket = google.cloud.storage.Client().bucket('to-the-moon-stocks')
     storage_bucket.blob('scraped_stocks').upload_from_filename('/tmp/scraped_stocks.txt')
+=======
+    #   Iterates through the top 3 scraped stock symbols.
+    for stock_symbol in scraped_stock_symbols:
+
+        query_parameters = {'function': 'TIME_SERIES_INTRADAY', 'symbol': stock_symbol[1:], 'interval': '60min', 'apikey': stock_API_key}
+
+        #   Sends a GET request to the Alpha Vantage API to retrieve stock information about stock symbol.
+        stock_info_response = requests.get('https://www.alphavantage.co/query', params=query_parameters)
+
+        #   Checks whether the Alpha Vantage API recognized the stock symbol.
+        if stock_info_response.status_code == 200:
+
+            #   Retrieves the closing price of the stock symbol on the most recent stock trading day.
+            stock_last_refreshed_datetime = stock_info_response.json()['Meta Data']['3. Last Refreshed']
+            stock_closing_price = stock_info_response.json()['Time Series (60min)'][stock_last_refreshed_datetime]['4. close']
+            stock_closing_price_two_decimals = '{:.2f}'.format(float(stock_closing_price))
+            scraped_stocks_closing_prices.append(stock_closing_price_two_decimals)
+    
+    print(scraped_stock_symbols)
+    print(scraped_stocks_closing_prices)
+
+main()
+>>>>>>> 7f02fc817da4bfe6ba8554e4f7bac66b901f54ec
